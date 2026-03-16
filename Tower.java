@@ -2,6 +2,7 @@ import java.util.Stack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import javax.swing.JOptionPane;
 
 /**
  * Clase principal que administra la torre de objetos apilables.
