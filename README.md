@@ -1,2 +1,3 @@
-# Proyecto-Inicial-Dopo
-Este es el github del proyecto corte 1 y 2 de dopo
+# Proyecto-Inicial-Dopo-ciclo-1
+Este es el branch del proyecto ciclo 1 del proyecto
+
