@@ -216,6 +216,41 @@ public class Tower
         refreshView();
     }
 
+   /**
+    * Este metodo es swap hace que cambien de posición dos elementos de la torre
+    *usa los paramatros
+    *@param o1 identifica el primer objeto
+    *@param o2 identifica el segundo objeto
+    */
+    public void swap(String[] o1, String[] o2)
+    {
+        ArrayList<StackItem> list = new ArrayList<StackItem>(items);
+
+        int idx1 = findItemIndex(list, o1);
+        int idx2 = findItemIndex(list, o2);
+
+        if (idx1 == -1 || idx2 == -1) {
+            ok = false;
+            showError("One of the objects was not found.");
+            return;
+        }
+
+        if (idx1 == idx2) {
+            ok = false;
+            showError("Both objects are in the same slot.");
+            return;
+        }
+
+        StackItem temp = list.get(idx1);
+        list.set(idx1, list.get(idx2));
+        list.set(idx2, temp);
+
+        rebuildStackFromList(list);
+        ok = true;
+        refreshView();
+    }
+    
+
     /**
      * Retorna la altura total de la torre.
      * @return altura total
