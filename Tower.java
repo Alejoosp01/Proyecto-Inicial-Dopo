@@ -249,6 +249,43 @@ public class Tower
         ok = true;
         refreshView();
     }
+
+   /**
+    * Método que cambia dos cupas de posición
+    */
+    public void cover()
+    {
+        ArrayList<StackItem> list  = new ArrayList<StackItem>(items);
+        boolean              found = true;
+
+        while (found) {
+            found = false;
+            int i = 0;
+
+            while (i < list.size() && !found) {
+                if (list.get(i).hasOnlyCup()) {
+                    int cupNum = list.get(i).getCupNumber();
+                    int j = 0;
+
+                    while (j < list.size() && !found) {
+                        if (j != i
+                                && list.get(j).hasOnlyLid()
+                                && list.get(j).getLidNumber() == cupNum) {
+                            list.get(i).setLid(list.get(j).getLid());
+                            list.remove(j);
+                            found = true;
+                        }
+                        j++;
+                    }
+                }
+                i++;
+            }
+        }
+
+        rebuildStackFromList(list);
+        ok = true;
+        refreshView();
+    }
     
 
     /**
@@ -316,6 +353,50 @@ public class Tower
 
         return result;
     }
+
+    /*
+     * verifica y revisa la torre si se puede reducir o cambiar posiciones para bajar la altura
+     *
+     */
+    public String[][] swapToReduce()
+    {
+        ArrayList<StackItem> list = new ArrayList<StackItem>(items);
+
+        for (int i = 0; i < list.size(); i++) {
+            if (!list.get(i).hasOnlyCup()) continue;
+
+            int cupNumber = list.get(i).getCupNumber();
+
+            for (int j = 0; j < list.size(); j++) {
+                if (j == i || !list.get(j).hasOnlyLid()) continue;
+                if (list.get(j).getLidNumber() != cupNum)  continue;
+
+                if (j == i + 1) {
+                    return new String[][]{
+                        {"cup", String.valueOf(cupNum)},
+                        {"lid", String.valueOf(cupNum)}
+                    };
+                }
+
+                int aboveCup = i + 1;
+
+                if (aboveCup < list.size() && aboveCup != j) {
+                    return new String[][]{
+                        itemIdentifier(list.get(aboveCup)),
+                        {"lid", String.valueOf(cupNum)}
+                    };
+                }
+
+                return new String[][]{
+                    {"cup", String.valueOf(cupNum)},
+                    {"lid", String.valueOf(cupNum)}
+                };
+            }
+        }
+
+        return null;
+    }
+
 
     /**
      * Hace visible la torre.
@@ -517,7 +598,54 @@ public class Tower
             items.push(ordered.get(i));
         }
     }
+    
+   /*
+    * ayuda a encontrar los indices de los objetos en la lista paralas funciones cover y swaptoreduce
+    */
+    private int findItemIndex(ArrayList<StackItem> list, String[] id)
+    {
+        if (id == null || id.length < 2) return -1;
+    
+        String type   = id[0];
+        int    number = Integer.parseInt(id[1]);
+    
+        for (int i = 0; i < list.size(); i++) {
+            StackItem item = list.get(i);
+    
+            if ("cup".equals(type) && item.hasCup()
+                    && item.getCupNumber() == number) return i;
+    
+            if ("lid".equals(type) && item.hasLid()
+                    && item.getLidNumber() == number) return i;
+        }
+    
+        return -1;
+    }
 
+    /**
+     * Retorna el identificador del objeto dominante en un slot.
+     * Las tazas tienen prioridad sobre las tapas.
+     */
+    private String[] itemIdentifier(StackItem item)
+    {
+        if (item.hasCup()) {
+            return new String[]{"cup", String.valueOf(item.getCupNumber())};
+        }
+        return new String[]{"lid", String.valueOf(item.getLidNumber())};
+    }
+
+    /**
+     * Muestra un mensaje de error con JOptionPane solo si la torre está visible.
+     * En modo invisible el error se ignora silenciosamente.
+     */
+    private void showError(String message)
+    {
+        if (visible) {
+            JOptionPane.showMessageDialog(null, message,
+                "Tower error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
     /**
      * Actualiza la vista si la torre está visible.
      */
