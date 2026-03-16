@@ -31,6 +31,20 @@ public class Tower
     }
 
     /**
+     * Crea una torre vacía.
+     * Con el único parametro que sea con el numero de copas
+     */
+
+    public Tower(int cups)
+    {
+        this(2 * cups - 1, cups * cups);
+
+        for (int i = 1; i <= cups; i++) {
+            pushCup(i);
+        }
+    }
+
+    /**
      * Agrega una taza a la torre.
      * @param number número de la taza
      */
